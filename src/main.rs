@@ -457,9 +457,9 @@ const _WORDS_POST: [&str; 69] = [
     "profit", "that", "forest", "coin", "total",
 ];
 
-const WORDS_VIDEO_ONLY: [&str; 14] = [
-    "sure", "original", "goat", "unlock", "already", "can", "task", "account", "chat", "sponsor",
-    "claim", "song", "sing", "easy",
+const WORDS_VIDEO_ONLY: [&str; 13] = [
+    "sure", "original", "goat", "unlock", "already", "can", "task", "account", "chat", "claim",
+    "song", "sing", "easy",
 ];
 
 const WORDS_POST_ONLY: [&str; 56] = [
