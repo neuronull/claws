@@ -436,7 +436,7 @@ const WORDLIST: [&str; 2048] = [
 //    "top", "head", "current", "this", "phrase", "spend", "make", "can", "month", "trade",
 //];
 
-const _POSSIBLE_WORDS: [&str; 81] = [
+const _POSSIBLE_WORDS: [&str; 84] = [
     "word", "time", "song", "when", "because", "know", "initial", "original", "cattle", "goat",
     "roast", "claim", "left", "only", "high", "address", "there", "that", "dinner", "all", "wait",
     "now", "round", "bring", "then", "coin", "very", "possible", "hidden", "video", "rib", "like",
@@ -444,13 +444,13 @@ const _POSSIBLE_WORDS: [&str; 81] = [
     "idea", "chat", "what", "market", "total", "good", "sure", "post", "gain", "great", "task",
     "expect", "year", "stay", "one", "best", "already", "update", "come", "forest", "act", "hard",
     "profit", "you", "easy", "will", "account", "chase", "top", "head", "current", "this",
-    "phrase", "spend", "make", "can", "month", "trade",
+    "phrase", "spend", "make", "can", "month", "trade", "special", "farm", "card",
 ];
 
-const _WORDS_VIDEO: [&str; 28] = [
+const _WORDS_VIDEO: [&str; 31] = [
     "sure", "original", "goat", "you", "post", "unlock", "hidden", "will", "then", "fog", "more",
     "already", "can", "there", "task", "account", "this", "seed", "update", "chat", "sponsor",
-    "claim", "song", "video", "expect", "sing", "parrot", "easy",
+    "claim", "song", "video", "expect", "sing", "parrot", "easy", "special", "farm", "card",
 ];
 
 const _WORDS_POST: [&str; 69] = [
@@ -463,9 +463,9 @@ const _WORDS_POST: [&str; 69] = [
     "profit", "that", "forest", "coin", "total",
 ];
 
-const WORDS_VIDEO_ONLY: [&str; 13] = [
+const WORDS_VIDEO_ONLY: [&str; 16] = [
     "sure", "original", "goat", "unlock", "already", "can", "task", "account", "chat", "claim",
-    "song", "sing", "easy",
+    "song", "sing", "easy", "special", "farm", "card",
 ];
 
 const WORDS_POST_ONLY: [&str; 56] = [
