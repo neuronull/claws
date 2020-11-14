@@ -102,7 +102,8 @@ fn work(mnemonics: Arc<Mutex<Vec<String>>>, do_run: Arc<Mutex<bool>>, thread_id:
     let idxs: Vec<usize> = vec![1, 2, 5, 6, 7, 8, 9, 10];
     let mut run = true;
     let mut start = Instant::now();
-    let five_min = Duration::from_secs(300);
+    let one_hour = Duration::from_secs(3600);
+    let mut n_hours = 0;
 
     let vs = vec![0, 1, 2]; // 0 == post , 1 == video , 2 == either
     let mut pword: &str = mnemonic_v[1];
@@ -171,10 +172,15 @@ fn work(mnemonics: Arc<Mutex<Vec<String>>>, do_run: Arc<Mutex<bool>>, thread_id:
             }
             //println!("searching for valid mnemonic...");
         }
-        if start.elapsed() >= five_min {
+        if start.elapsed() >= one_hour {
             let r = do_run.lock().unwrap();
             if *r == false {
                 run = false;
+            }
+            if thread_id == 0 {
+                let m = mnemonics.lock().unwrap();
+                n_hours = n_hours + 1;
+                println!("hours: {} mnemonics: {}", n_hours, (*m).len());
             }
             start = Instant::now();
         }
