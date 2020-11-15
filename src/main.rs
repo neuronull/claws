@@ -125,22 +125,33 @@ fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
         }
     };
 
+    let one_hour = Duration::from_secs(3600);
+    let mut tot_hours = 0;
+
     for word in my_words {
         let mut start = Instant::now();
-        let one_hour = Duration::from_secs(3600);
         let mut n_hours = 0;
         println!("core_id: {} word: {}", core_id, word);
         for (i, idx) in idxs_.iter().enumerate() {
             let mut mnemonic_v = mnemonic.clone();
             let mut idxs = idxs_.clone();
             mnemonic_v[idxs[i]] = word;
-            println!("{:?}", mnemonic);
+            println!("{:?}", mnemonic_v);
             idxs.remove(i);
 
             // for the 3 remaining from the video
             for idx_va in 0..len_video {
+                if WORDS_VIDEO[idx_va] == word {
+                    continue;
+                }
                 for idx_vb in 0..len_video {
+                    if WORDS_VIDEO[idx_vb] == word {
+                        continue;
+                    }
                     for idx_vc in 0..len_video {
+                        if WORDS_VIDEO[idx_vc] == word {
+                            continue;
+                        }
                         if idx_va == idx_vb || idx_va == idx_vc || idx_vb == idx_vc {
                             continue;
                         }
@@ -213,7 +224,10 @@ fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
                                                                         mnemonic_v.join(" ")
                                                                     );
                                                                     iters = iters + 1;
-                                                                    //println!("{}", mnemonic_str);
+                                                                    //println!(
+                                                                    //    "{}",
+                                                                    //    mnemonic_str
+                                                                    //);
                                                                     if is_mnemonic_valid(
                                                                         &mnemonic_v,
                                                                     ) {
@@ -226,9 +240,11 @@ fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
                                                                             >= one_hour
                                                                         {
                                                                             n_hours = n_hours + 1;
+                                                                            tot_hours =
+                                                                                tot_hours + 1;
                                                                             println!(
-                                                                        "core_id: {} word: {} hours: {} mnemonics: {}",
-                                                                        core_id, word, n_hours, iters
+                                                                        "core_id: {} word: {} idx: {} hours: {} total_hours: {} mnemonics: {}",
+                                                                        core_id, word, i, n_hours, tot_hours, iters
                                                                     );
                                                                             start = Instant::now();
                                                                         }
@@ -248,11 +264,14 @@ fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
                 }
             }
             println!(
-                "core_id: {} word: {} exhausted search, not at index: {}",
-                core_id, word, idx
+                "core_id: {} word: {} exhausted search after {} hours, not at index: {}",
+                core_id, word, n_hours, idx
             );
         }
-        println!("core_id: {}, word: {} is not in mnemonic", core_id, word);
+        println!(
+            "core_id: {}, word: {} is not in mnemonic hours: {}",
+            core_id, word, n_hours
+        );
     }
 }
 
