@@ -91,98 +91,148 @@ fn is_correct_address(mnemonic: &str) -> bool {
 
 // assumes that there are 3 remaining words from video and 4 remaining words from post
 // also assumes that "seed" is a word from the post
-fn work_iter(mut mnemonic_v: Vec<&str>, idxs: Vec<usize>, idx_sp: usize) {
+fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
     let len_video = WORDS_VIDEO.len();
     let len_post = WORDS_POST.len();
 
     let mut iters = 0;
-    let mut start = Instant::now();
-    let one_hour = Duration::from_secs(3600);
-    let mut n_hours = 0;
 
-    // for the 3 remaining from the video
-    for idx_va in 0..len_video {
-        for idx_vb in 0..len_video {
-            for idx_vc in 0..len_video {
-                if idx_va == idx_vb || idx_va == idx_vc || idx_vb == idx_vc {
-                    continue;
-                }
-                for (a, idx_ma) in idxs.iter().enumerate() {
-                    for (b, idx_mb) in idxs.iter().enumerate() {
-                        for (c, idx_mc) in idxs.iter().enumerate() {
-                            if a == b || a == c || b == c {
-                                continue;
-                            }
-                            mnemonic_v[*idx_ma] = WORDS_VIDEO[idx_va];
-                            mnemonic_v[*idx_mb] = WORDS_VIDEO[idx_vb];
-                            mnemonic_v[*idx_mc] = WORDS_VIDEO[idx_vc];
+    let my_words = match core_id {
+        0 => vec![
+            //"sure", "original", "goat", "unlock", "already", "can", "task",
+            "sure", "original", "goat", "unlock",
+            //"already", "can", "task",
+        ],
+        1 => vec![
+            //"account", "chat", "claim", "song", "sing", "easy", "special",
+            "account", "chat", "claim", "song",
+            //"sing", "easy", "special",
+        ],
+        2 =>
+        //vec!["farm", "card", "you", "update", "hidden", "will", "video"],
+        {
+            vec!["farm", "card", "you", "update"]
+        }
+        //vec!["hidden", "will", "video"],
+        3 =>
+        //vec!["post", "this", "then", "more", "expect", "there", "sponsor"],
+        {
+            vec!["post", "this", "then", "more"]
+        }
+        //vec!["expect", "there", "sponsor"],
+        _ => {
+            panic!("not 4 cores");
+        }
+    };
 
-                            // remove those from the idxs remaining
-                            let mut idxs_rem = idxs.clone();
-                            let mut index = idxs_rem.iter().position(|&r| r == *idx_ma).unwrap();
-                            idxs_rem.remove(index);
-                            index = idxs_rem.iter().position(|&r| r == *idx_mb).unwrap();
-                            idxs_rem.remove(index);
-                            index = idxs_rem.iter().position(|&r| r == *idx_mc).unwrap();
-                            idxs_rem.remove(index);
-                            //println!("{:?}", idxs_rem);
+    for word in my_words {
+        let mut start = Instant::now();
+        let one_hour = Duration::from_secs(3600);
+        let mut n_hours = 0;
+        println!("core_id: {} word: {}", core_id, word);
+        for (i, idx) in idxs_.iter().enumerate() {
+            let mut mnemonic_v = mnemonic.clone();
+            let mut idxs = idxs_.clone();
+            mnemonic_v[idxs[i]] = word;
+            println!("{:?}", mnemonic);
+            idxs.remove(i);
 
-                            for idx_pa in 0..len_post {
-                                for idx_pb in 0..len_post {
-                                    for idx_pc in 0..len_post {
-                                        for idx_pd in 0..len_post {
-                                            if idx_pa == idx_pb
-                                                || idx_pa == idx_pc
-                                                || idx_pa == idx_pd
-                                                || idx_pb == idx_pc
-                                                || idx_pb == idx_pd
-                                                || idx_pc == idx_pd
-                                            {
-                                                continue;
-                                            }
+            // for the 3 remaining from the video
+            for idx_va in 0..len_video {
+                for idx_vb in 0..len_video {
+                    for idx_vc in 0..len_video {
+                        if idx_va == idx_vb || idx_va == idx_vc || idx_vb == idx_vc {
+                            continue;
+                        }
+                        for (a, idx_ma) in idxs.iter().enumerate() {
+                            for (b, idx_mb) in idxs.iter().enumerate() {
+                                for (c, idx_mc) in idxs.iter().enumerate() {
+                                    if a == b || a == c || b == c {
+                                        continue;
+                                    }
+                                    mnemonic_v[*idx_ma] = WORDS_VIDEO[idx_va];
+                                    mnemonic_v[*idx_mb] = WORDS_VIDEO[idx_vb];
+                                    mnemonic_v[*idx_mc] = WORDS_VIDEO[idx_vc];
 
-                                            // for the remaining  4 from the video
-                                            for (aa, idx_maa) in idxs_rem.iter().enumerate() {
-                                                for (bb, idx_mbb) in idxs_rem.iter().enumerate() {
-                                                    for (cc, idx_mcc) in idxs_rem.iter().enumerate()
+                                    // remove those from the idxs remaining
+                                    let mut idxs_rem = idxs.clone();
+                                    let mut index =
+                                        idxs_rem.iter().position(|&r| r == *idx_ma).unwrap();
+                                    idxs_rem.remove(index);
+                                    index = idxs_rem.iter().position(|&r| r == *idx_mb).unwrap();
+                                    idxs_rem.remove(index);
+                                    index = idxs_rem.iter().position(|&r| r == *idx_mc).unwrap();
+                                    idxs_rem.remove(index);
+                                    //println!("{:?}", idxs_rem);
+
+                                    for idx_pa in 0..len_post {
+                                        for idx_pb in 0..len_post {
+                                            for idx_pc in 0..len_post {
+                                                for idx_pd in 0..len_post {
+                                                    if idx_pa == idx_pb
+                                                        || idx_pa == idx_pc
+                                                        || idx_pa == idx_pd
+                                                        || idx_pb == idx_pc
+                                                        || idx_pb == idx_pd
+                                                        || idx_pc == idx_pd
                                                     {
-                                                        for (dd, idx_mdd) in
+                                                        continue;
+                                                    }
+
+                                                    // for the remaining  4 from the video
+                                                    for (aa, idx_maa) in idxs_rem.iter().enumerate()
+                                                    {
+                                                        for (bb, idx_mbb) in
                                                             idxs_rem.iter().enumerate()
                                                         {
-                                                            if aa == bb
-                                                                || aa == cc
-                                                                || aa == dd
-                                                                || bb == cc
-                                                                || bb == dd
-                                                                || cc == dd
+                                                            for (cc, idx_mcc) in
+                                                                idxs_rem.iter().enumerate()
                                                             {
-                                                                continue;
-                                                            }
-                                                            mnemonic_v[*idx_maa] =
-                                                                WORDS_POST[idx_pa];
-                                                            mnemonic_v[*idx_mbb] =
-                                                                WORDS_POST[idx_pb];
-                                                            mnemonic_v[*idx_mcc] =
-                                                                WORDS_POST[idx_pc];
-                                                            mnemonic_v[*idx_mdd] =
-                                                                WORDS_POST[idx_pd];
-                                                            let mnemonic_str =
-                                                                format!("{}", mnemonic_v.join(" "));
-                                                            //println!("{}", mnemonic_str);
-                                                            if is_mnemonic_valid(&mnemonic_v) {
-                                                                iters = iters + 1;
-                                                                if is_correct_address(
-                                                                    &mnemonic_str[..],
-                                                                ) {
-                                                                    return;
-                                                                }
-                                                                if start.elapsed() >= one_hour {
-                                                                    n_hours = n_hours + 1;
-                                                                    println!(
-                                                                        "idx_sp: {} hours: {} mnemonics: {}",
-                                                                        idx_sp, n_hours, iters
+                                                                for (dd, idx_mdd) in
+                                                                    idxs_rem.iter().enumerate()
+                                                                {
+                                                                    if aa == bb
+                                                                        || aa == cc
+                                                                        || aa == dd
+                                                                        || bb == cc
+                                                                        || bb == dd
+                                                                        || cc == dd
+                                                                    {
+                                                                        continue;
+                                                                    }
+                                                                    mnemonic_v[*idx_maa] =
+                                                                        WORDS_POST[idx_pa];
+                                                                    mnemonic_v[*idx_mbb] =
+                                                                        WORDS_POST[idx_pb];
+                                                                    mnemonic_v[*idx_mcc] =
+                                                                        WORDS_POST[idx_pc];
+                                                                    mnemonic_v[*idx_mdd] =
+                                                                        WORDS_POST[idx_pd];
+                                                                    let mnemonic_str = format!(
+                                                                        "{}",
+                                                                        mnemonic_v.join(" ")
                                                                     );
-                                                                    start = Instant::now();
+                                                                    iters = iters + 1;
+                                                                    //println!("{}", mnemonic_str);
+                                                                    if is_mnemonic_valid(
+                                                                        &mnemonic_v,
+                                                                    ) {
+                                                                        if is_correct_address(
+                                                                            &mnemonic_str[..],
+                                                                        ) {
+                                                                            return;
+                                                                        }
+                                                                        if start.elapsed()
+                                                                            >= one_hour
+                                                                        {
+                                                                            n_hours = n_hours + 1;
+                                                                            println!(
+                                                                        "core_id: {} word: {} hours: {} mnemonics: {}",
+                                                                        core_id, word, n_hours, iters
+                                                                    );
+                                                                            start = Instant::now();
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -197,9 +247,13 @@ fn work_iter(mut mnemonic_v: Vec<&str>, idxs: Vec<usize>, idx_sp: usize) {
                     }
                 }
             }
+            println!(
+                "core_id: {} word: {} exhausted search, not at index: {}",
+                core_id, word, idx
+            );
         }
+        println!("core_id: {}, word: {} is not in mnemonic", core_id, word);
     }
-    println!("exhausted search: sponsor is not at index: {}", idx_sp);
 }
 
 fn get_rand_from(mnemonic_v: &Vec<&str>, word_list: &'static [&str]) -> &'static str {
@@ -334,22 +388,16 @@ fn do_iterative() {
     // video : fog, parrot, sponsor
     // post : dutch
     // either : seed
-    //let idxs: Vec<usize> = vec![1, 2, 5, 6, 7, 8, 9, 10];
+    let idxs: Vec<usize> = vec![1, 2, 5, 6, 7, 8, 9, 10];
 
-    let idxs: Vec<usize> = vec![1, 2, 5, 6];
+    //let idxs: Vec<usize> = vec![1, 2, 5, 6];
     //let idxs: Vec<usize> = vec![7, 8, 9, 10];
 
     let mut handles = vec![];
     let core_ids = core_affinity::get_core_ids().unwrap();
     for id in core_ids {
-        println!("thread_id {} sponsor idx = {}", id.id, idxs[id.id]);
-
-        let mut mnemonic = mnemonic_v.clone();
-        mnemonic[idxs[id.id]] = "sponsor";
-        println!("{:?}", mnemonic);
-        let mut idxs_pure = idxs.clone();
-        idxs_pure.remove(id.id);
-
+        let mnemonic = mnemonic_v.clone();
+        let idxs_pure = idxs.clone();
         let handle = thread::spawn(move || {
             core_affinity::set_for_current(id);
             work_iter(mnemonic, idxs_pure, id.id);
