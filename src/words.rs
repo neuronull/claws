@@ -234,12 +234,12 @@ pub const _POSSIBLE_WORDS: [&str; 84] = [
     "phrase", "spend", "make", "can", "month", "trade", "special", "farm", "card",
 ];
 
-pub const _WORDS_VIDEO_ONLY: [&str; 16] = [
+pub const WORDS_VIDEO_ONLY: [&str; 16] = [
     "sure", "original", "goat", "unlock", "already", "can", "task", "account", "chat", "claim",
     "song", "sing", "easy", "special", "farm", "card",
 ];
 
-pub const _WORDS_POST_ONLY: [&str; 56] = [
+pub const WORDS_POST_ONLY: [&str; 56] = [
     "what", "chase", "very", "good", "man", "capital", "high", "best", "only", "gain", "round",
     "possible", "phrase", "mind", "month", "roast", "great", "year", "idea", "head", "stay",
     "spend", "now", "current", "all", "bring", "have", "wait", "when", "come", "act", "they",
@@ -248,7 +248,7 @@ pub const _WORDS_POST_ONLY: [&str; 56] = [
     "forest", "coin", "total",
 ];
 
-pub const _WORDS_BOTH: [&str; 11] = [
+pub const WORDS_BOTH: [&str; 11] = [
     "you", "update", "hidden", "will", "video", "post", "this", "then", "more", "expect", "there",
 ];
 

@@ -16,7 +16,7 @@ use wagyu_ethereum::{
 use wagyu_model::{ExtendedPrivateKey, ExtendedPublicKey, Mnemonic, MnemonicExtended, PublicKey};
 
 mod words;
-use words::{WORDLIST, WORDS_POST, WORDS_VIDEO};
+use words::{WORDLIST, WORDS_BOTH, WORDS_POST, WORDS_POST_ONLY, WORDS_VIDEO, WORDS_VIDEO_ONLY};
 
 fn get_checksum(data: &[u8]) -> u8 {
     let mut hasher = Sha256::new();
@@ -190,7 +190,7 @@ fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
                                                         continue;
                                                     }
 
-                                                    // for the remaining  4 from the video
+                                                    // for the remaining  4 from the post
                                                     for (aa, idx_maa) in idxs_rem.iter().enumerate()
                                                     {
                                                         for (bb, idx_mbb) in
@@ -275,7 +275,7 @@ fn work_iter(mnemonic: Vec<&str>, idxs_: Vec<usize>, core_id: usize) {
     }
 }
 
-fn get_rand_from(mnemonic_v: &Vec<&str>, word_list: &'static [&str]) -> &'static str {
+fn _get_rand_from(mnemonic_v: &Vec<&str>, word_list: &'static [&str]) -> &'static str {
     let mut pword = word_list.choose(&mut rand::thread_rng()).unwrap();
     while mnemonic_v.contains(pword) {
         pword = word_list.choose(&mut rand::thread_rng()).unwrap();
@@ -283,7 +283,7 @@ fn get_rand_from(mnemonic_v: &Vec<&str>, word_list: &'static [&str]) -> &'static
     pword
 }
 
-fn work_rand(mnemonics: Arc<Mutex<Vec<String>>>, do_run: Arc<Mutex<bool>>, thread_id: usize) {
+fn _work_rand(mnemonics: Arc<Mutex<Vec<String>>>, do_run: Arc<Mutex<bool>>, thread_id: usize) {
     println!("starting worker thread {}", thread_id);
 
     let mut mnemonic_v = vec![
@@ -314,19 +314,19 @@ fn work_rand(mnemonics: Arc<Mutex<Vec<String>>>, do_run: Arc<Mutex<bool>>, threa
             //if n_post + n_video == 12 {
             //    println!("never get here");
             if n_post == 6 || (n_post == 6 && n_video < 6) {
-                pword = get_rand_from(&mnemonic_v, &WORDS_VIDEO);
+                pword = _get_rand_from(&mnemonic_v, &WORDS_VIDEO);
                 n_video = n_video + 1;
             } else if n_video == 6 || (n_video == 6 && n_post < 6) {
-                pword = get_rand_from(&mnemonic_v, &WORDS_POST);
+                pword = _get_rand_from(&mnemonic_v, &WORDS_POST);
                 n_post = n_post + 1;
             } else {
                 let idx = vs.choose(&mut rand::thread_rng()).unwrap();
                 if idx == &0 {
-                    pword = get_rand_from(&mnemonic_v, &WORDS_POST);
+                    pword = _get_rand_from(&mnemonic_v, &WORDS_POST);
                     n_post = n_post + 1;
                 }
                 if idx == &1 {
-                    pword = get_rand_from(&mnemonic_v, &WORDS_VIDEO);
+                    pword = _get_rand_from(&mnemonic_v, &WORDS_VIDEO);
                     n_video = n_video + 1;
                 }
             }
@@ -376,7 +376,7 @@ fn work_rand(mnemonics: Arc<Mutex<Vec<String>>>, do_run: Arc<Mutex<bool>>, threa
     }
 }
 
-fn do_rand() {
+fn _do_rand() {
     let mnemonics = Arc::new(Mutex::new(vec!["".to_owned()]));
     let do_run = Arc::new(Mutex::new(true));
     let mut handles = vec![];
@@ -390,13 +390,88 @@ fn do_rand() {
         let do_run = Arc::clone(&do_run);
         let handle = thread::spawn(move || {
             core_affinity::set_for_current(id);
-            work_rand(mnemonics, do_run, id.id);
+            _work_rand(mnemonics, do_run, id.id);
         });
         handles.push(handle);
     }
 
     for handle in handles.into_iter() {
         handle.join().unwrap();
+    }
+}
+
+fn _do_rand_one_th() {
+    println!("starting...");
+
+    let mut mnemonic_v = vec![
+        "dutch", "", "", "seed", "fog", "", "", "", "", "", "", "parrot",
+    ];
+    // video : fog, parrot, sponsor
+    // post : dutch
+    // either : seed
+
+    let idxs: Vec<usize> = vec![1, 2, 5, 6, 7, 8, 9, 10];
+    let mut start = Instant::now();
+    let one_hour = Duration::from_secs(3600);
+    let mut n_hours = 0;
+
+    let vs = vec![0, 1, 2]; // 0 == post , 1 == video, 2 == either
+    let mut pword: &str = mnemonic_v[1];
+
+    let mut run = true;
+    let mut iters = 0;
+    while run {
+        //let idx_sp = idxs.choose(&mut rand::thread_rng()).unwrap();
+        //mnemonic_v[*idx_sp] = "sponsor";
+        let mut n_post = 1;
+        let mut n_video = 3;
+        let mut n_either = 1;
+        for i in &idxs {
+            //if i == idx_sp {
+            //    continue;
+            //}
+            //if n_post + n_video == 12 {
+            //    println!("never get here");
+            if n_post == 6 || (n_post + n_either == 6 && n_video < 6) {
+                pword = _get_rand_from(&mnemonic_v, &WORDS_VIDEO_ONLY);
+                n_video = n_video + 1;
+            } else if n_video == 6 || (n_video + n_either == 6 && n_post < 6) {
+                pword = _get_rand_from(&mnemonic_v, &WORDS_POST_ONLY);
+                n_post = n_post + 1;
+            } else {
+                let idx = vs.choose(&mut rand::thread_rng()).unwrap();
+                if idx == &0 {
+                    pword = _get_rand_from(&mnemonic_v, &WORDS_POST_ONLY);
+                    n_post = n_post + 1;
+                }
+                if idx == &1 {
+                    pword = _get_rand_from(&mnemonic_v, &WORDS_VIDEO_ONLY);
+                    n_video = n_video + 1;
+                }
+                if idx == &2 {
+                    pword = _get_rand_from(&mnemonic_v, &WORDS_BOTH);
+                    n_either = n_either + 1;
+                }
+            }
+            mnemonic_v[*i] = pword;
+        }
+        //println!(
+        //    "n_video = {} , n_post = {}, n_either = {}",
+        //    n_video, n_post, n_either
+        //);
+        let mnemonic_str = format!("{}", mnemonic_v.join(" "));
+        if is_mnemonic_valid(&mnemonic_v) {
+            if is_correct_address(&mnemonic_str[..]) {
+                run = false;
+            }
+            //println!("unique valid mnemonic: {}", mnemonic_str);
+        }
+        iters = iters + 1;
+        if start.elapsed() >= one_hour {
+            n_hours = n_hours + 1;
+            println!("hours: {} mnemonics: {}", n_hours, iters);
+            start = Instant::now();
+        }
     }
 }
 
