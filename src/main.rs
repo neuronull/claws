@@ -400,7 +400,7 @@ fn _do_rand() {
     }
 }
 
-fn _do_rand_one_th() {
+fn do_rand_one_th() {
     println!("starting...");
 
     let mut mnemonic_v = vec![
@@ -424,7 +424,7 @@ fn _do_rand_one_th() {
         //let idx_sp = idxs.choose(&mut rand::thread_rng()).unwrap();
         //mnemonic_v[*idx_sp] = "sponsor";
         let mut n_post = 1;
-        let mut n_video = 3;
+        let mut n_video = 2;
         let mut n_either = 1;
         for i in &idxs {
             //if i == idx_sp {
@@ -461,15 +461,15 @@ fn _do_rand_one_th() {
         //);
         let mnemonic_str = format!("{}", mnemonic_v.join(" "));
         if is_mnemonic_valid(&mnemonic_v) {
+            iters = iters + 1;
             if is_correct_address(&mnemonic_str[..]) {
                 run = false;
             }
             //println!("unique valid mnemonic: {}", mnemonic_str);
         }
-        iters = iters + 1;
         if start.elapsed() >= one_hour {
             n_hours = n_hours + 1;
-            println!("hours: {} mnemonics: {}", n_hours, iters);
+            println!("hours: {} valid mnemonics: {}", n_hours, iters);
             start = Instant::now();
         }
     }
@@ -505,5 +505,5 @@ fn do_iterative() {
 }
 
 fn main() {
-    do_iterative();
+    do_rand_one_th();
 }
