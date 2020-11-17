@@ -96,35 +96,6 @@ fn work_iter(mut mnemonic_v: Vec<&str>, idxs: Vec<usize>, core_id: usize, sp_idx
     let len_post = WORDS_POST.len();
 
     let mut iters = 0;
-
-    //let my_words = match core_id {
-    //    0 => vec![
-    //        //"sure", "original", "goat", "unlock", "already", "can", "task",
-    //        "sure", "original", "goat", "unlock",
-    //        //"already", "can", "task",
-    //    ],
-    //    1 => vec![
-    //        //"account", "chat", "claim", "song", "sing", "easy", "special",
-    //        "account", "chat", "claim", "song",
-    //        //"sing", "easy", "special",
-    //    ],
-    //    2 =>
-    //    //vec!["farm", "card", "you", "update", "hidden", "will", "video"],
-    //    {
-    //        vec!["farm", "card", "you", "update"]
-    //    }
-    //    //vec!["hidden", "will", "video"],
-    //    3 =>
-    //    //vec!["post", "this", "then", "more", "expect", "there", "sponsor"],
-    //    {
-    //        vec!["post", "this", "then", "more"]
-    //    }
-    //    //vec!["expect", "there", "sponsor"],
-    //    _ => {
-    //        panic!("not 4 cores");
-    //    }
-    //};
-
     let one_hour = Duration::from_secs(3600);
     let mut tot_hours = 0;
 
@@ -449,9 +420,8 @@ fn do_iterative() {
     let mnemonic_v = vec![
         "dutch", "", "", "seed", "fog", "", "", "", "", "", "", "parrot",
     ];
-    // video : fog, parrot, sponsor
-    // post : dutch
-    // either : seed
+    // video : fog, parrot
+    // post : dutch, seed, sponsor
     let idxs: Vec<usize> = vec![1, 2, 5, 6, 7, 8, 9, 10];
 
     //let idxs: Vec<usize> = vec![1, 2, 5, 6];

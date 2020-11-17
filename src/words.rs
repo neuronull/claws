@@ -239,13 +239,13 @@ pub const WORDS_VIDEO_ONLY: [&str; 16] = [
     "song", "sing", "easy", "special", "farm", "card",
 ];
 
-pub const WORDS_POST_ONLY: [&str; 56] = [
+pub const WORDS_POST_ONLY: [&str; 57] = [
     "what", "chase", "very", "good", "man", "capital", "high", "best", "only", "gain", "round",
     "possible", "phrase", "mind", "month", "roast", "great", "year", "idea", "head", "stay",
     "spend", "now", "current", "all", "bring", "have", "wait", "when", "come", "act", "they",
     "dinner", "top", "word", "address", "hard", "market", "know", "make", "rib", "because",
     "trade", "one", "time", "soon", "initial", "ten", "like", "left", "cattle", "profit", "that",
-    "forest", "coin", "total",
+    "forest", "coin", "total", "sponsor",
 ];
 
 pub const WORDS_BOTH: [&str; 11] = [
