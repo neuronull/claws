@@ -421,15 +421,15 @@ fn do_rand_one_th() {
     let mut run = true;
     let mut iters = 0;
     while run {
-        //let idx_sp = idxs.choose(&mut rand::thread_rng()).unwrap();
-        //mnemonic_v[*idx_sp] = "sponsor";
+        let idx_sp = idxs.choose(&mut rand::thread_rng()).unwrap();
+        mnemonic_v[*idx_sp] = "fork";
         let mut n_post = 1;
         let mut n_video = 2;
         let mut n_either = 1;
         for i in &idxs {
-            //if i == idx_sp {
-            //    continue;
-            //}
+            if i == idx_sp {
+                continue;
+            }
             //if n_post + n_video == 12 {
             //    println!("never get here");
             if n_post == 6 || (n_post + n_either == 6 && n_video < 6) {
